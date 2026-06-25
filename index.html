@@ -5,289 +5,330 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kübra & Mert Davetiye</title>
     <style>
-        /* SİZİN ORİJİNAL TASARIMINIZ VE ESKİ DÜZEN */
-        body {
+        /* Genel Stil Ayarları */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #faf6f0;
-            font-family: 'Georgia', serif;
-            color: #4a4a4a;
-            overflow-x: hidden;
         }
-
-        /* Giriş Ekranı (Zarf ve Mühür Bölümü) */
-        .envelope-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: #f3ede2;
+        body {
+            font-family: 'Playfair Display', 'Georgia', serif;
+            background-color: #f4f3ef;
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            transition: transform 1.5s ease-in-out;
-            background-image: url('https://www.transparenttextures.com/patterns/soft-paper.png');
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Mobil Cihaz Çerçevesi Öykünmesi (Videodaki gibi şık durması için) */
+        .phone-container {
+            width: 100%;
+            max-width: 450px;
+            background-color: #ffffff;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        .envelope {
-            position: relative;
-            width: 90%;
-            max-width: 450px;
-            height: 300px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        /* 1. EKRAN: Animasyonlu Zarf Alanı */
+        .envelope-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f4f3ef;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border: 2px solid #dfd5c6;
-            cursor: pointer;
+            z-index: 10;
+            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
             padding: 20px;
+        }
+        .envelope-wrapper.opened {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .envelope-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
             text-align: center;
         }
-
+        
+        /* Grafiksel Zarf Yapısı */
+        .envelope {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            background-color: #606c38; /* Zeytin Yeşili */
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            cursor: pointer;
+            margin-bottom: 40px;
+        }
+        /* Zarf Kapağı */
         .envelope::before {
             content: '';
             position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 1px dashed #bfa15f;
-            border-radius: 8px;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-top: 100px solid #4f582f; /* Daha koyu yeşil kapak */
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 3;
+        }
+        .envelope.open-cap::before {
+            transform: rotateX(180deg) translateY(2px);
+            z-index: 1;
+        }
+        /* Zarfın İçindeki Kartlaşma */
+        .mumu-seal {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background-color: #b79455; /* Gold Mum Mühür */
+            border-radius: 50%;
+            z-index: 4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: opacity 0.3s ease;
+        }
+        .envelope.open-cap .mumu-seal {
+            opacity: 0;
+        }
+        .click-text {
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: #606c38;
+            font-weight: bold;
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
         }
 
-        .names-title {
-            font-size: 2.2rem;
-            color: #bfa15f;
-            margin-bottom: 5px;
-            font-family: 'Playfair Display', serif;
-            letter-spacing: 2px;
+        /* 2. EKRAN: Davetiye İçeriği (Zarf açılınca görünür) */
+        .main-content {
+            padding: 30px 20px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            transition-delay: 0.5s;
         }
-
-        .invitation-text {
-            font-size: 1rem;
-            color: #666;
+        .phone-container.active .main-content {
+            opacity: 1;
+        }
+        
+        .names-header {
+            font-size: 32px;
+            color: #606c38;
+            margin-bottom: 10px;
+        }
+        .sub-title {
             font-style: italic;
+            font-size: 16px;
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        /* Orijinal Sitedeki Davetiye Görselleri */
+        .invitation-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 25px;
         }
 
-        /* Mühür Butonu */
-        .seal {
-            width: 75px;
-            height: 75px;
-            background: radial-gradient(#cc3333, #990000);
+        /* Geri Sayım Sayacı (Countdown) */
+        .countdown-section {
+            background-color: #606c38;
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .countdown-title {
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .timer {
+            display: flex;
+            justify-content: space-around;
+        }
+        .time-box {
+            font-size: 18px;
+        }
+        .time-box span {
+            display: block;
+            font-size: 11px;
+            color: #dfd;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        /* Müzik Plak Alanı (Videodaki Concept) */
+        .music-box {
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .disc {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #333 30%, #111 31%, #333 40%, #000 41%);
             border-radius: 50%;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(153,0,0,0.4), inset 0 2px 5px rgba(255,255,255,0.3);
             display: flex;
             justify-content: center;
             align-items: center;
             color: #fff;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border: 3px solid #b30000;
-            transition: transform 0.3s;
-            animation: pulse 2s infinite;
-        }
-
-        .seal::after {
-            content: 'KM';
-            font-family: 'Times New Roman', serif;
-            letter-spacing: 1px;
-        }
-
-        .seal:hover {
-            transform: scale(1.05);
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(153,0,0,0.5); }
-            70% { box-shadow: 0 0 0 15px rgba(153,0,0,0); }
-            100% { box-shadow: 0 0 0 0 rgba(153,0,0,0); }
-        }
-
-        /* Zarfın Yukarı Kayma Efekti */
-        .envelope-container.opened {
-            transform: translateY(-100vh);
-        }
-
-        /* Ana İçerik Alanı */
-        .main-content {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1s ease, transform 1s ease;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .main-content.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Davetiye Kartı Görselleri ve Yapısı */
-        .invitation-card {
-            background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            overflow: hidden;
-            margin-top: 30px;
-            margin-bottom: 30px;
-            border: 1px solid #eae1d4;
-        }
-
-        .card-image {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* Sabit Müzik Butonu */
-        .music-toggle {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #bfa15f;
-            color: white;
-            border: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             cursor: pointer;
-            z-index: 999;
-            font-size: 1.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.3s;
+        }
+        .disc.playing {
+            animation: rotateDisc 3s linear infinite;
         }
 
-        .music-toggle:hover {
-            transform: scale(1.1);
+        /* Animasyon Tanımlamaları */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
-
-        /* YouTube API için Görünmez Katman */
-        #youtube-audio-layer {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
+        @keyframes rotateDisc {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- SİZİN ORİJİNAL ZARF VE MÜHÜR DÜZENİNİZ -->
-    <div class="envelope-container" id="envelopeContainer">
-        <div class="envelope" onclick="openInvitation()">
-            <div class="names-title">Kübra & Mert</div>
-            <div class="invitation-text">Düğün Davetiyemize Hoş Geldiniz</div>
-            <div class="seal"></div>
-        </div>
-    </div>
-
-    <!-- ANA İÇERİK: ESKİ DÜZENDEKİ GİBİ SADECE KART GÖRSELLERİNİZ -->
-    <div class="main-content" id="mainContent">
-        <div class="invitation-card">
-            <!-- Birinci Sayfa Görseliniz -->
-            <img src="https://eemmertkarademir-pixel.github.io/Kubra-Mert./1.png" alt="Davetiye Sayfa 1" class="card-image">
-        </div>
+    <div class="phone-container" id="container">
         
-        <div class="invitation-card">
-            <!-- İkinci Sayfa Görseliniz -->
-            <img src="https://eemmertkarademir-pixel.github.io/Kubra-Mert./2.png" alt="Davetiye Sayfa 2" class="card-image">
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope-title">
+                <p>Kübra & Mert</p>
+                <p style="font-size: 14px; color: #777; margin-top: 5px;">Düğün Davetiyesi</p>
+            </div>
+            
+            <div class="envelope" id="envelope" onclick="openInvitation()">
+                <div class="mumu-seal">K & M</div>
+            </div>
+            
+            <div class="click-text" onclick="openInvitation()">AÇMAK İÇİN TIKLAYINIZ</div>
         </div>
-    </div>
 
-    <!-- Müzik Kontrol Butonu -->
-    <button class="music-toggle" id="musicBtn" onclick="toggleMusic()">🎻</button>
+        <div class="main-content">
+            <h1 class="names-header">Kübra & Mert</h1>
+            <p class="sub-title">Düğün Davetiyemize Hoş Geldiniz</p>
+            
+            <img src="https://eemmertkarademir-pixel.github.io/Kubra-Mert./1.png" alt="Davetiye Sayfa 1" class="invitation-img">
+            <img src="https://eemmertkarademir-pixel.github.io/Kubra-Mert./2.png" alt="Davetiye Sayfa 2" class="invitation-img">
+            
+            <div class="music-box">
+                <div class="disc" id="musicDisc" onclick="toggleMusic()">🎻</div>
+                <p style="font-size: 12px; margin-top: 8px; color: #606c38; font-weight: bold;">Müziği Başlat/Durdur</p>
+                <audio id="bgMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+            </div>
 
-    <!-- Arka Planda Gizli Çalışan Oynatıcı -->
-    <div id="youtube-audio-layer">
-        <div id="player-instance"></div>
+            <div class="countdown-section">
+                <p class="countdown-title">Düğünümüze Kalan Süre</p>
+                <div class="timer">
+                    <div class="time-box"><div id="days">00</div><span>Gün</span></div>
+                    <div class="time-box"><div id="hours">00</div><span>Saat</span></div>
+                    <div class="time-box"><div id="minutes">00</div><span>Dakika</span></div>
+                    <div class="time-box"><div id="seconds">00</div><span>Saniye</span></div>
+                </div>
+            </div>
+
+            <p style="font-size: 20px; color: #606c38; margin-top: 20px;">🎻</p>
+        </div>
+
     </div>
 
     <script>
-        let player;
-        let isPlaying = false;
-        let isApiReady = false;
-
-        // YouTube Iframe API Yüklenmesi
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player-instance', {
-                height: '10',
-                width: '10',
-                videoId: 'MPhNFTdhG3E', // Seçtiğiniz Keman Fon Müziği
-                playerVars: {
-                    'playsinline': 1,
-                    'controls': 0,
-                    'rel': 0,
-                    'showinfo': 0
-                },
-                events: {
-                    'onReady': onPlayerReady
-                }
-            });
-        }
-
-        function onPlayerReady(event) {
-            isApiReady = true;
-        }
-
-        // Zarfı Açma ve Müziği Başlatma Fonksiyonu (Eski düzeni korur)
+        // Zarfı Açma Fonksiyonu
         function openInvitation() {
-            // Zarfı yukarı kaydırarak gizle
-            document.getElementById('envelopeContainer').classList.add('opened');
+            const envelope = document.getElementById('envelope');
+            const wrapper = document.getElementById('envelopeWrapper');
+            const container = document.getElementById('container');
             
-            // Ana davetiye kartlarını görünür yap
-            document.getElementById('mainContent').classList.add('visible');
-
-            // Arka planda müziği güvenli bir şekilde tetikle
-            if (isApiReady && player && typeof player.playVideo === "function") {
-                player.playVideo();
-                isPlaying = true;
-                document.getElementById('musicBtn').innerHTML = "🔇";
-            } else {
-                // API saliselerle geciktiyse tekrar dene
-                setTimeout(() => {
-                    if (player && typeof player.playVideo === "function") {
-                        player.playVideo();
-                        isPlaying = true;
-                        document.getElementById('musicBtn').innerHTML = "🔇";
-                    }
-                }, 400);
-            }
+            // Önce zarf kapağını aç
+            envelope.classList.add('open-cap');
+            
+            // Kısa bir süre sonra zarfı yukarı kaydır ve içeriği göster
+            setTimeout(() => {
+                wrapper.classList.add('opened');
+                container.classList.add('active');
+                // Müziği otomatik başlatmayı dene (Tarayıcı izinlerine bağlıdır)
+                playMusic();
+            }, 800);
         }
 
-        // Müzik Duraklatma / Başlatma
+        // Müzik Kontrol Fonksiyonları
+        const audio = document.getElementById('bgMusic');
+        const disc = document.getElementById('musicDisc');
+
+        function playMusic() {
+            audio.play().then(() => {
+                disc.classList.add('playing');
+            }).catch(err => console.log("Otomatik müzik çalma tarayıcı tarafından engellendi. Kullanıcı etkileşimi gerekiyor."));
+        }
+
         function toggleMusic() {
-            if (player && typeof player.playVideo === "function") {
-                if (isPlaying) {
-                    player.pauseVideo();
-                    document.getElementById('musicBtn').innerHTML = "🎻";
-                    isPlaying = false;
-                } else {
-                    player.playVideo();
-                    document.getElementById('musicBtn').innerHTML = "🔇";
-                    isPlaying = true;
-                }
+            if (audio.paused) {
+                audio.play();
+                disc.classList.add('playing');
+            } else {
+                audio.pause();
+                disc.classList.remove('playing');
             }
         }
+
+        // Kalan Zaman Sayacı Fonksiyonu (9 Ağustos 2026 - 19:00 için ayarlı)
+        const weddingDate = new Date("Aug 9, 2026 19:00:00").getTime();
+
+        const timerInterval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerHTML = days < 10 ? "0" + days : days;
+            document.getElementById("hours").innerHTML = hours < 10 ? "0" + hours : hours;
+            document.getElementById("minutes").innerHTML = minutes < 10 ? "0" + minutes : minutes;
+            document.getElementById("seconds").innerHTML = seconds < 10 ? "0" + seconds : seconds;
+
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                document.querySelector(".countdown-section").innerHTML = "Düğün Günü Geldi!";
+            }
+        }, 1000);
     </script>
 </body>
 </html>
